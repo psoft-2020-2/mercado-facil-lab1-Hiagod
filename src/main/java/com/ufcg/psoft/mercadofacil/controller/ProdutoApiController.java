@@ -38,6 +38,11 @@ public class ProdutoApiController {
 		
 		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/produtos/descricao/{id}", method = RequestMethod.GET)
+	public String descricaoProduto(@PathVariable Long id) {
+		return produtoService.descricaoProduto(id);
+	}
 	
 	@RequestMapping(value = "/produto/", method = RequestMethod.POST)
 	public ResponseEntity<?> criarProduto(@RequestBody ProdutoDTO produtoDTO, UriComponentsBuilder ucBuilder) {
@@ -60,7 +65,7 @@ public class ProdutoApiController {
 		Optional<Produto> optionalProduto = produtoService.getProdutoById(id);
 	
 		if (!optionalProduto.isPresent()) {
-			return ErroProduto.erroProdutoNaoEnconrtrado(id);
+			return ErroProduto.erroProdutoNaoEncontrado(id);
 		}
 		
 		return new ResponseEntity<Produto>(optionalProduto.get(), HttpStatus.OK);
@@ -72,7 +77,7 @@ public class ProdutoApiController {
 		Optional<Produto> optionalProduto = produtoService.getProdutoById(id);
 		
 		if (!optionalProduto.isPresent()) {
-			return ErroProduto.erroProdutoNaoEnconrtrado(id);
+			return ErroProduto.erroProdutoNaoEncontrado(id);
 		}
 		
 		Produto produto = optionalProduto.get();
@@ -89,11 +94,27 @@ public class ProdutoApiController {
 		Optional<Produto> optionalProduto = produtoService.getProdutoById(id);
 		
 		if (!optionalProduto.isPresent()) {
-			return ErroProduto.erroProdutoNaoEnconrtrado(id);
+			return ErroProduto.erroProdutoNaoEncontrado(id);
 		}
 				
 		produtoService.removerProdutoCadastrado(optionalProduto.get());
 
 		return new ResponseEntity<Produto>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/produto/descricao/{id}", method = RequestMethod.PUT)
+	public void editarDescricao(@PathVariable Long id, @RequestBody ProdutoDTO produtoDTO){
+		produtoService.editarDescricao(id,produtoDTO);
+
+	}
+
+	@RequestMapping(value = "/produto/descricao/{id}", method = RequestMethod.GET)
+	public ResponseEntity<?> exibeDescricao(@PathVariable Long id){
+
+		if (produtoService.exibeDescricao(id).isEmpty()){
+			return ErroProduto.erroSemDescricaoCadastrada();
+		} else {
+			return new  ResponseEntity<String> (produtoService.exibeDescricao(id),HttpStatus.OK);
+		}
 	}
 }

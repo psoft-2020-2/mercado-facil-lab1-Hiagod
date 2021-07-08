@@ -14,6 +14,8 @@ public class ProdutoDTO {
 	
 	private String categoria;
 
+	private String descricao;
+
 	public String getNome() {
 		return nome;
 	}
@@ -47,10 +49,15 @@ public class ProdutoDTO {
 	}
 
 	public String getCategoria() {
-		return categoria;
+		return this.categoria;
 	}
 
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
+
+	public String getDescricao(){ return this.descricao;}
+
+	public void setDescricao(String descricao) {  this.descricao = descricao;  }
+
 }

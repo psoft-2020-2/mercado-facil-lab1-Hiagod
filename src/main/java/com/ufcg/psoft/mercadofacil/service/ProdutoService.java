@@ -19,6 +19,12 @@ public interface ProdutoService {
 	public List<Produto> listarProdutos();
 	
 	public Produto criaProduto(ProdutoDTO produto);
-	
+
+	public String descricaoProduto(Long id);
+
+	public void editarDescricao( Long id, ProdutoDTO produtoDTO);
+
 	public Produto atualizaProduto(ProdutoDTO produtoDTO, Produto produto);
+
+	public String exibeDescricao(Long id);
 }

@@ -9,19 +9,21 @@ import javax.persistence.OneToOne;
 @Entity
 public class Lote {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	
-	@OneToOne
+
+    @OneToOne
     private Produto produto;
     private int numeroDeItens;
+    private String validade;
 
     private Lote() { }
-    
-    public Lote(Produto produto, int numeroDeItens) {
+
+    public Lote(Produto produto, int numeroDeItens, String validade) {
         this.produto = produto;
         this.numeroDeItens = numeroDeItens;
+        this.validade = validade;
     }
 
     public Long getId() {
@@ -40,6 +42,13 @@ public class Lote {
         return numeroDeItens;
     }
 
+    public String getValidade() {
+        return validade;
+    }
+    public void setValidade(String validade){
+        this.validade = validade;
+    }
+
     public void setNumeroDeItens(int numeroDeItens) {
         this.numeroDeItens = numeroDeItens;
     }
@@ -49,7 +58,8 @@ public class Lote {
         return "Lote{" +
                 "id=" + id +
                 ", produto=" + produto.getId() +
-                ", numeroDeItens=" + numeroDeItens + '\'' +
+                ", numeroDeItens=" + numeroDeItens +
+                ", validade="+ validade + '\'' +
                 '}';
     }
 }

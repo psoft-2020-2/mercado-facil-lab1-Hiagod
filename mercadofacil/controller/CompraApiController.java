@@ -19,6 +19,17 @@ public class CompraApiController {
     @Autowired
     CompraService compraService;
     
+    @RequestMapping(value = "/compras", method = RequestMethod.GET)
+    public ResponseEntity<?> listarCompras(){
+
+        List<Compra> compras = compraService.listarCompras();
+
+        if (compras.isEmpty()) {
+            return ErroCompra.erroComprasInexistentes();
+        }
+
+        return new ResponseEntity<List<Compra>>(compras, HttpStatus.OK);
+    }
     
     @RequestMapping(value = "/compras/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> listarVenda(@PathVariable("id") long id) {
@@ -33,17 +44,6 @@ public class CompraApiController {
 
         return new ResponseEntity<Compra>(compra, HttpStatus.OK);
     }
-    @RequestMapping(value = "/compras", method = RequestMethod.GET)
-    public ResponseEntity<?> listarCompras(){
-
-        List<Compra> compras = compraService.listarCompras();
-
-        if (compras.isEmpty()) {
-            return ErroCompra.erroComprasInexistentes();
-        }
-
-        return new ResponseEntity<List<Compra>>(compras, HttpStatus.OK);
-    }
-
+ 
     
 }

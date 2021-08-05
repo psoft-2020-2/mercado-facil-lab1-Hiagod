@@ -1,9 +1,11 @@
 package com.ufcg.psoft.mercadofacil.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Cliente {
@@ -19,14 +21,19 @@ public class Cliente {
 	private Integer idade;
 
 	private String endereco;
+	
+	@OneToOne(cascade=CascadeType.PERSIST)
+	private TipoPerfil tipo;
 
 	private Cliente() {}
 
-	public Cliente(Long cpf, String nome, Integer idade, String endereco) {
-		this.CPF = cpf;
+	public Cliente(Long CPF, String nome, Integer idade, String endereco, String tipoPerfil) {
+		this.CPF = CPF;
 		this.nome = nome;
 		this.idade = idade;
 		this.endereco = endereco;
+		this.tipo = new TipoPerfil(tipoPerfil);
+
 	}
 
 	public Long getId() {
@@ -36,10 +43,18 @@ public class Cliente {
 	public Long getCpf() {
 		return CPF;
 	}
+	
+	public void setCPF(Long cpf) {
+        this.CPF = cpf;
+    }
 
 	public String getNome() {
 		return nome;
 	}
+	
+	public void setNome(String nome) {
+        this.nome = nome;
+    }
 
 	public Integer getIdade() {
 		return idade;
@@ -55,5 +70,13 @@ public class Cliente {
 
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
+	}
+	
+	public TipoPerfil getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String perfil) {
+		getTipo().setPerfil(perfil);
 	}
 }

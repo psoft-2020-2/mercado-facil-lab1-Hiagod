@@ -9,6 +9,7 @@ import com.ufcg.psoft.mercadofacil.model.Produto;
 public class ErroProduto {
 
 	static final String PRODUTOS_SEM_DESCRICAO = "Não há descrição nesse Produto";
+	
 	static final String PRODUTO_NAO_CASTRADO = "Produto com id %s não está cadastrado";
 
 	static final String PRODUTOS_NAO_CASTRADOS = "Não há produtos cadastrados";

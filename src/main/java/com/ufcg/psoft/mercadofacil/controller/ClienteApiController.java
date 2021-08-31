@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.ufcg.psoft.mercadofacil.DTO.ClienteDTO;
-import com.ufcg.psoft.mercadofacil.model.Cliente;
-import com.ufcg.psoft.mercadofacil.service.ClienteService;
+import com.ufcg.psoft.mercadofacil.DTO.*;
+import com.ufcg.psoft.mercadofacil.model.*;
+import com.ufcg.psoft.mercadofacil.repository.*;
+import com.ufcg.psoft.mercadofacil.service.*;
 import com.ufcg.psoft.mercadofacil.util.ErroCliente;
 
 @RestController
@@ -26,7 +27,16 @@ public class ClienteApiController {
 
 	@Autowired
 	ClienteService clienteService;
+    @Autowired
+    ClienteRepository clienteRepository;
+    @Autowired
+    CarrinhoRepository carrinhoRepository;
+    @Autowired
+    ProdutoRepository produtoRepository;
+    @Autowired
+    CompraRepository compraRepository;
 	
+    
 	@RequestMapping(value = "/clientes", method = RequestMethod.GET)
 	public ResponseEntity<?> listarClientes() {
 		
@@ -96,4 +106,9 @@ public class ClienteApiController {
 
 		return new ResponseEntity<Cliente>(HttpStatus.OK);
 	}
+	
+	
+	
+	
+	
 }

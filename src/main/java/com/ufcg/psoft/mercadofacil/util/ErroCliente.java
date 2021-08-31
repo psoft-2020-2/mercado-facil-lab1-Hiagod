@@ -9,12 +9,14 @@ public class ErroCliente {
 	
 	static final String CLIENTE_NAO_CASTRADO = "Cliente com id %s não está cadastrado";
 	
-	static final String CLIENTES_NAO_CASTRADOS = "Não há clienters cadastrados";
+	static final String CLIENTES_NAO_CASTRADOS = "Não há clientes cadastrados";
 
 	static final String NAO_FOI_POSSIVEL_ATUALIZAR = "Não foi possível mudar atualizar a situação do cliente %s "
 			+ "nome %s";
 
 	static final String CLIENTE_JA_CADASTRADO = "O cliente %s nome %s já esta cadastrado";
+	
+	static final String TIPO_USUARO_INVALIDO = "Esse tipo de usuário não é válido";
 
 	public static ResponseEntity<CustomErrorType> erroClienteNaoEncontrado(long id) {
 		return new ResponseEntity<CustomErrorType>(new CustomErrorType(String.format(ErroCliente.CLIENTE_NAO_CASTRADO, id)),
@@ -30,4 +32,8 @@ public class ErroCliente {
 		return new ResponseEntity<CustomErrorType>(new CustomErrorType(String.format(ErroCliente.CLIENTE_JA_CADASTRADO,
 				clienteDTO.getCPF(), clienteDTO.getNome())), HttpStatus.CONFLICT);
 	}
+	
+	public static ResponseEntity<CustomErrorType> erroTipoUsuarioInvalido() {
+        return new ResponseEntity<CustomErrorType>(new CustomErrorType(ErroCliente.TIPO_USUARO_INVALIDO), HttpStatus.NOT_FOUND);
+    }
 }

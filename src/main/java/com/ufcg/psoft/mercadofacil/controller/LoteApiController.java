@@ -73,7 +73,7 @@ public class LoteApiController {
         if(validade.equals(null)){
         	return new ResponseEntity<> ("sem informação",HttpStatus.NO_CONTENT);
 		}
-        return new  ResponseEntity<> (validade,HttpStatus.OK);
+        return new  ResponseEntity<> (validade, HttpStatus.OK);
     }
 
 	@RequestMapping(value = "lote/validade/{id}", method = RequestMethod.PUT)

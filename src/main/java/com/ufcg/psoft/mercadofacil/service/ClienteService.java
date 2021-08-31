@@ -2,6 +2,7 @@ package com.ufcg.psoft.mercadofacil.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.math.BigDecimal;
 
 import com.ufcg.psoft.mercadofacil.DTO.ClienteDTO;
 import com.ufcg.psoft.mercadofacil.model.Cliente;
@@ -21,5 +22,8 @@ public interface ClienteService {
 	public Cliente criaCliente(ClienteDTO clienteDTO);
 	
 	public Cliente atualizaCliente(ClienteDTO clienteDTO, Cliente cliente);
+	
+    public BigDecimal aplicaDesconto(Cliente cliente, BigDecimal valor, Integer quantItens);
+
 
 }

@@ -15,22 +15,17 @@ public class Compra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String data;
-    private BigDecimal valorDaVenda;
-    
+    @OneToOne
+    private Pagamento pagamento;
+
     @OneToMany
-    private List<ItemVenda> itensDaCompra;
-    
-   
+    private List<ItemVenda> itensDaVenda;
 
     public Compra() { }
 
-    public Compra(BigDecimal valorDaVenda, List<ItemVenda> itensDaCompra) {
-        this.itensDaCompra = itensDaCompra;
-        this.valorDaVenda = valorDaVenda;
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-        this.data = df.format(new Date());
-        
+    public Compra(BigDecimal valorDaVenda, String pagamento, List<ItemVenda> itensDaVenda) {
+        this.itensDaVenda = itensDaVenda;
+        this.pagamento = new Pagamento(pagamento, valorDaVenda);
     }
 
     public void setId(Long id) {
@@ -41,31 +36,33 @@ public class Compra {
         return id;
     }
 
-    public String getData() {
-        return data;
+    public List<ItemVenda> getItensDaVenda() {
+        return itensDaVenda;
     }
 
-    public List<ItemVenda> getItensDaVenda() {
-        return itensDaCompra;
+    public Pagamento getPagamento() {
+        return pagamento;
     }
-   
 
     public BigDecimal getValor() {
-        return valorDaVenda;
+        return getPagamento().getValor();
     }
-        
-        
+
+    public void setValor(BigDecimal novoValor) {
+        this.getPagamento().setValor(novoValor);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Compra compra = (Compra) o;
-        return data.equals(compra.data) && itensDaCompra.equals(compra.itensDaCompra);
+        return  pagamento.equals(compra.pagamento) && itensDaVenda.equals(compra.itensDaVenda);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(data, itensDaCompra);
+        return Objects.hash( pagamento, itensDaVenda);
     }
 
     @Override
@@ -76,7 +73,7 @@ public class Compra {
         }
         return "{\n" +
                 "  \"id\": " +  getId() + ",\n" +
-                "  \"data\": \""+  getData() + "\",\n" +
+                "  \"pagamento\": " +  this.pagamento + ",\n" +
                 "  \"itensDaVenda\": [\n" +
                 intermed.substring(0, intermed.length()-2) +
                 "\n  ]\n" +

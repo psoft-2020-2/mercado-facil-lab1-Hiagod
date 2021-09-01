@@ -1,7 +1,6 @@
 package com.ufcg.psoft.mercadofacil.model;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -11,6 +10,10 @@ public class Carrinho {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long idUser;
+    
+    private String tipoEntrega;
+
+    private String endereco;
 
     @OneToMany
     private List<ItemCarrinho> carrinhoList;
@@ -18,7 +21,7 @@ public class Carrinho {
     public Carrinho() { }
 
     public Carrinho(long idUser, List<ItemCarrinho> carrinho) {
-        this.idUser = idUser;
+        this.setIdUser(idUser);
         this.carrinhoList = carrinho;
     }
 
@@ -60,4 +63,26 @@ public class Carrinho {
     public boolean isEmpty() {
         return carrinhoList.isEmpty();
     }
+
+	public Long getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(Long idUser) {
+		this.idUser = idUser;
+	}
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+    public String getEndereco(){
+        return this.endereco;
+    }
+    public void setTipoEntrega(String entrega){
+        this.tipoEntrega = entrega;
+    }
+
+    public String getTipoEntrega(){
+        return this.tipoEntrega;
+    }
+    
 }

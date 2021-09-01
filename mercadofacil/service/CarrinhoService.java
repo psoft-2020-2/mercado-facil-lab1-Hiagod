@@ -8,23 +8,30 @@ import com.ufcg.psoft.mercadofacil.model.ItemCarrinho;
 
 public interface CarrinhoService {
 
-	public List<ItemCarrinho> listarItensCarrinho(long idUser);
-	
-	public ItemCarrinho getItemCarrinhoById(long idUser, long idItem);
+    List<ItemCarrinho> listarItensCarrinho(long idUser);
 
-	public void atualizaCarrinho(long idUser, ItemCarrinho itemCarrinho);
+    ItemCarrinho getItemCarrinhoById(long idUser, long idItem);
 
-	public ItemCarrinho criarItemCarrinho(long idItem, int quantidadeItem, String nomeItem, BigDecimal precoItem);
+    void atualizaCarrinho(long idUser, ItemCarrinho ItemCarrinho);
 
-	public ItemCarrinho atualizaItemCarrinho(long idUser, long idItem, int numItens);
-	
-	public void removerItemCarrinho(long idUser, ItemCarrinho itemCarrinho);
-	
-	public void limparCarrinho(long idUser);
+    ItemCarrinho criarItemCarrinho(long idItem, int quantidadeItem, String nomeItem, BigDecimal precoItem);
 
-	public boolean isCarrinhoLimpo(long idUser);
+    ItemCarrinho atualizaItemCarrinho(long idUser, long idItem, int numItens);
 
-	public Carrinho criarCarrinho(long idUser);
+    void removerItemCarrinho(long idUser, ItemCarrinho ItemCarrinho);
 
-	public void removerCarrinho(long idUser);
+    void limparCarrinho(long idUser);
+
+    boolean isCarrinhoLimpo(long idUser);
+
+    Carrinho criarCarrinho(long idUser);
+
+    void removerCarrinho(long idUser);
+
+    void defineEntrega(long idUser, String tipoEntrega, String endereco);
+
+    String getEntrega(long idUser);
+
+    String getEndereco(long idUser);
 }
+

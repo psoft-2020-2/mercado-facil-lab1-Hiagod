@@ -1,25 +1,28 @@
 package com.ufcg.psoft.mercadofacil.service;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.ufcg.psoft.mercadofacil.DTO.ClienteDTO;
 import com.ufcg.psoft.mercadofacil.model.Cliente;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
 public interface ClienteService {
 
-	public Optional<Cliente> getClienteById(Long id);
-	
-	public Optional<Cliente> getClienteByCPF(Long cpf);
-	
-	public void removerClienteCadastrado(Cliente cliente);
+    Optional<Cliente> listaClienteById(long id);
 
-	public void salvarClienteCadastrado(Cliente cliente);
+    Optional<Cliente> getClienteByCpf(Long cpf);
 
-	public List<Cliente> listarClientes();
-	
-	public Cliente criaCliente(ClienteDTO clienteDTO);
-	
-	public Cliente atualizaCliente(ClienteDTO clienteDTO, Cliente cliente);
+    void removerCliente(Cliente cliente);
+
+    void salvarCliente(Cliente cliente);
+
+    List<Cliente> listarClientes();
+
+    Cliente criarCliente(ClienteDTO clienteDTO);
+
+    Cliente atualizaCliente(ClienteDTO clienteDTO, Cliente cliente);
+
+    BigDecimal aplicaDesconto(Cliente cliente, BigDecimal valor, Integer quantItens);
 
 }

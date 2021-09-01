@@ -18,13 +18,12 @@ public class Lote {
     private int numeroDeItens;
     private String validade;
 
-    private Lote() { }
-    
+    public Lote(){}
+
     public Lote(Produto produto, int numeroDeItens) {
         this.produto = produto;
         this.numeroDeItens = numeroDeItens;
     }
-
     public Lote(Produto produto, int numeroDeItens, String validade) {
         this.produto = produto;
         this.numeroDeItens = numeroDeItens;
@@ -34,11 +33,10 @@ public class Lote {
     public Long getId() {
         return id;
     }
-    
+
     public void setId(Long id) {
         this.id = id;
     }
-
     public Produto getProduto() {
         return produto;
     }
@@ -67,8 +65,7 @@ public class Lote {
         return "Lote{" +
                 "id=" + id +
                 ", produto=" + produto.getId() +
-                ", numeroDeItens=" + numeroDeItens +
-                ", validade="+ validade + '\'' +
+                ", numeroDeItens=" + numeroDeItens + '\'' +
                 '}';
     }
 }

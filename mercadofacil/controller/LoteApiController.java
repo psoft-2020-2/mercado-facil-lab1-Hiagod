@@ -66,14 +66,14 @@ public class LoteApiController {
 	}
 
     @RequestMapping(value = "lote/validade/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> exibeDescricao(@PathVariable Long id){
+    public ResponseEntity<?> exibeValidade(@PathVariable Long id){
 
         String validade = loteService.exibeValidade(id);
 
         if(validade.equals(null)){
-        	return new ResponseEntity<> ("sem informação",HttpStatus.NO_CONTENT);
+        	return new ResponseEntity<> ("produto sem validade",HttpStatus.NO_CONTENT);
 		}
-        return new  ResponseEntity<> (validade, HttpStatus.OK);
+        return new  ResponseEntity<> (validade,HttpStatus.OK);
     }
 
 	@RequestMapping(value = "lote/validade/{id}", method = RequestMethod.PUT)

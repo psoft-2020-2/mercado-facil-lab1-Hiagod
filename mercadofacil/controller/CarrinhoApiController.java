@@ -24,219 +24,282 @@ import org.springframework.web.util.UriComponentsBuilder;
 @CrossOrigin
 public class CarrinhoApiController {
 
-	@Autowired
-	LoteService loteService;
-	@Autowired
-	ProdutoService produtoService;
-	@Autowired
-	CarrinhoService carrinhoService;
-	@Autowired
-	CompraService compraService;
-	@Autowired
-	ClienteService clienteService;
+    @Autowired
+    LoteService loteService;
 
-	@RequestMapping(value = "/{idUser}/carrinho", method = RequestMethod.GET)
-	public ResponseEntity<?> listarItensCarrinho(@PathVariable("idUser") long idUser){
+    @Autowired
+    ProdutoService produtoService;
 
-		Optional<Cliente> optionalCliente = clienteService.getClienteById(idUser);
+    @Autowired
+    CarrinhoService carrinhoService;
 
-		if (!optionalCliente.isPresent()) {
-			return ErroCliente.erroClienteNaoEncontrado(idUser);
-		}
+    @Autowired
+    CompraService compraService;
 
-		List<ItemCarrinho> carrinho = carrinhoService.listarItensCarrinho(idUser);
+    @Autowired
+    ClienteService clienteService;
 
-		if (carrinho.isEmpty()) {
-			return ErroCarrinho.erroCarrinhoVazio(idUser);
-		}
+    @RequestMapping(value = "/{idUser}/carrinho", method = RequestMethod.GET)
+    public ResponseEntity<?> listarItensCarrinho(@PathVariable("idUser") long idUser){
 
-		List<Lote> lista = new ArrayList<Lote>();
-		Long i = 1L;
+        Optional<Cliente> optionalCliente = clienteService.listaClienteById(idUser);
 
-		for (ItemCarrinho item: carrinho) {
-			Lote temp = new Lote(produtoService.getProdutoById(item.getIdItem()).get(), item.getQuantidadeItem());
-			temp.setId(i++);
-			lista.add(temp);
-		}
+        if (!optionalCliente.isPresent()) {
+            return ErroCliente.erroClienteNaoEncontrado(idUser);
+        }
 
-		return new ResponseEntity<List<Lote>>(lista, HttpStatus.OK);
-	}
+        List<ItemCarrinho> carrinho = carrinhoService.listarItensCarrinho(idUser);
 
-	@RequestMapping(value = "/{idUser}/carrinho/{id}", method = RequestMethod.POST)
-	public ResponseEntity<?> adicionarItemCarrinho(@PathVariable("idUser") long idUser, @PathVariable("id") long idItem, @RequestBody int numItens) {
+        if (carrinho.isEmpty()) {
+            return ErroCarrinho.erroCarrinhoVazio(idUser);
+        }
 
-		Optional<Cliente> optionalCliente = clienteService.getClienteById(idUser);
+        return new ResponseEntity<List<ItemCarrinho>>(carrinho, HttpStatus.OK);
+    }
 
-		if (!optionalCliente.isPresent()) {
-			return ErroCliente.erroClienteNaoEncontrado(idUser);
-		}
+    @RequestMapping(value = "/{idUser}/carrinho/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> adicionarItemCarrinho(@PathVariable("idUser") long idUser, @PathVariable("id") long idItem, @RequestBody int numItens) {
 
-		Optional<Produto> optionalProduto = produtoService.getProdutoById(idItem);
+        Optional<Cliente> optionalCliente = clienteService.listaClienteById(idUser);
 
-		if (!optionalProduto.isPresent()) {
-			return ErroProduto.erroProdutoNaoEncontrado(idItem);
-		}
+        if (!optionalCliente.isPresent()) {
+            return ErroCliente.erroClienteNaoEncontrado(idUser);
+        }
 
-		List<Lote> lotes = loteService.listarLotes();
+        Optional<Produto> optionalProduto = produtoService.getProdutoById(idItem);
 
-		if (lotes.isEmpty()) {
-			return ErroLote.erroSemLotesCadastrados();
-		}
+        if (!optionalProduto.isPresent()) {
+            return ErroProduto.erroProdutoNaoEncontrado(idItem);
+        }
 
-		List<Lote> lotesDoProduto = new ArrayList<Lote>();
+        List<Lote> lotes = loteService.listarLotes();
 
-		for (Lote lote: lotes) {
-			long id = lote.getProduto().getId();
-			if (idItem == id) {
-				lotesDoProduto.add(lote);
-			}
-		}
+        if (lotes.isEmpty()) {
+            return ErroLote.erroSemLotesCadastrados();
+        }
 
-		if (lotesDoProduto.isEmpty()) {
-			return ErroLote.erroSemLotesCadastrados();
-		}
+        List<Lote> lotesDoProduto = new ArrayList<Lote>();
 
-		ItemCarrinho itemNoCarrinho = carrinhoService.getItemCarrinhoById(idUser, idItem);
+        for (Lote lote: lotes) {
+            long id = lote.getProduto().getId();
+            if (idItem == id) {
+                lotesDoProduto.add(lote);
+            }
+        }
 
-		if (itemNoCarrinho != null) {
-			return ErroCarrinho.erroProdutoJaExisteNoCarrinho(optionalProduto.get());
-		}
+        if (lotesDoProduto.isEmpty()) {
+            return ErroLote.erroSemLotesCadastrados();
+        }
 
-		Produto produto = optionalProduto.get();
-		ItemCarrinho item = carrinhoService.criarItemCarrinho(idItem, numItens, produto.getNome(), produto.getPreco());
-		carrinhoService.atualizaCarrinho(idUser, item);
+        ItemCarrinho ProdutoCarrinho = carrinhoService.getItemCarrinhoById(idUser, idItem);
 
-		return new ResponseEntity<ItemCarrinho>(item, HttpStatus.CREATED);
-	}
+        if (ProdutoCarrinho != null) {
+            return ErroCarrinho.erroProdutoJaExisteNoCarrinho(optionalProduto.get());
+        }
 
-	@RequestMapping(value = "/{idUser}/carrinho/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<?> removerItemCarrinho(@PathVariable("idUser") long idUser, @PathVariable("id") long idItem) {
+        Produto produto = optionalProduto.get();
+        ItemCarrinho produtoNoCarrinho = carrinhoService.criarItemCarrinho(idItem, numItens, produto.getNome(), produto.getPreco());
+        carrinhoService.atualizaCarrinho(idUser, produtoNoCarrinho);
 
-		Optional<Cliente> optionalCliente = clienteService.getClienteById(idUser);
+        return new ResponseEntity<ItemCarrinho>(produtoNoCarrinho, HttpStatus.CREATED);
+    }
 
-		if (!optionalCliente.isPresent()) {
-			return ErroCliente.erroClienteNaoEncontrado(idUser);
-		}
+    @RequestMapping(value = "/{idUser}/carrinho/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> removerItemCarrinho(@PathVariable("idUser") long idUser, @PathVariable("id") long idItem) {
 
-		Optional<Produto> optionalProduto = produtoService.getProdutoById(idItem);
+        Optional<Cliente> optionalCliente = clienteService.listaClienteById(idUser);
 
-		if (!optionalProduto.isPresent()) {
-			return ErroProduto.erroProdutoNaoEncontrado(idItem);
-		}
+        if (!optionalCliente.isPresent()) {
+            return ErroCliente.erroClienteNaoEncontrado(idUser);
+        }
 
-		ItemCarrinho itemCarrinho = carrinhoService.getItemCarrinhoById(idUser, idItem);
+        Optional<Produto> optionalProduto = produtoService.getProdutoById(idItem);
 
-		if (itemCarrinho == null) {
-			return ErroCarrinho.erroItemNaoExisteNoCarrinho(idItem);
-		}
+        if (!optionalProduto.isPresent()) {
+            return ErroProduto.erroProdutoNaoEncontrado(idItem);
+        }
 
-		carrinhoService.removerItemCarrinho(idUser, itemCarrinho);
+        ItemCarrinho produtoC = carrinhoService.getItemCarrinhoById(idUser, idItem);
 
-		return new ResponseEntity<ItemCarrinho>(HttpStatus.NO_CONTENT);
-	}
+        if (produtoC == null) {
+            return ErroCarrinho.erroItemNaoExisteNoCarrinho(idItem);
+        }
 
-	@RequestMapping(value = "/{idUser}/carrinho/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<?> atualizarItemCarrinho(@PathVariable("idUser") long idUser, @PathVariable("id") long idItem, @RequestBody int numItens) {
+        carrinhoService.removerItemCarrinho(idUser, produtoC);
 
-		Optional<Cliente> optionalCliente = clienteService.getClienteById(idUser);
+        return new ResponseEntity<ItemCarrinho>(produtoC,HttpStatus.OK);
+    }
 
-		if (!optionalCliente.isPresent()) {
-			return ErroCliente.erroClienteNaoEncontrado(idUser);
-		}
+    @RequestMapping(value = "/{idUser}/carrinho/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> atualizarItemCarrinho(@PathVariable("idUser") long idUser, @PathVariable("id") long idItem, @RequestBody int numItens) {
 
-		Optional<Produto> optionalProduto = produtoService.getProdutoById(idItem);
+        Optional<Cliente> optionalCliente = clienteService.listaClienteById(idUser);
 
-		if (!optionalProduto.isPresent()) {
-			return ErroProduto.erroProdutoNaoEncontrado(idItem);
-		}
+        if (!optionalCliente.isPresent()) {
+            return ErroCliente.erroClienteNaoEncontrado(idUser);
+        }
 
-		ItemCarrinho itemCarrinho = carrinhoService.getItemCarrinhoById(idUser, idItem);
+        Optional<Produto> optionalProduto = produtoService.getProdutoById(idItem);
 
-		if (itemCarrinho == null) {
-			return ErroCarrinho.erroItemNaoExisteNoCarrinho(idItem);
-		}
+        if (!optionalProduto.isPresent()) {
+            return ErroProduto.erroProdutoNaoEncontrado(idItem);
+        }
 
-		List<Lote> lotes = loteService.listarLotes();
-		List<Lote> lotesDoProduto = new ArrayList<Lote>();
+        ItemCarrinho produtoCarrinho = carrinhoService.getItemCarrinhoById(idUser, idItem);
 
-		for (Lote lote: lotes) {
-			long id = lote.getProduto().getId();
-			if (idItem == id) {
-				lotesDoProduto.add(lote);
-			}
-		}
+        if (produtoCarrinho == null) {
+            return ErroCarrinho.erroItemNaoExisteNoCarrinho(idItem);
+        }
 
-		int quantMax = 0;
+        List<Lote> lotes = loteService.listarLotes();
+        List<Lote> lotesDoProduto = new ArrayList<Lote>();
 
-		for (Lote lote : lotesDoProduto) {
-			quantMax += lote.getNumeroDeItens();
-		}
+        for (Lote lote: lotes) {
+            long id = lote.getProduto().getId();
+            if (idItem == id) {
+                lotesDoProduto.add(lote);
+            }
+        }
 
-		if (quantMax < numItens) {
-			return ErroCarrinho.erroQuantidadeNaoDisponivel();
-		}
+        int quantMax = 0;
 
-		ItemCarrinho item = carrinhoService.atualizaItemCarrinho(idUser, idItem, numItens);
+        for (Lote lote : lotesDoProduto) {
+            quantMax += lote.getNumeroDeItens();
+        }
 
-		return new ResponseEntity<ItemCarrinho>(item, HttpStatus.OK);
-	}
+        if (quantMax < numItens) {
+            return ErroCarrinho.erroQuantidadeNaoDisponivel();
+        }
 
-	@RequestMapping(value = "/{idUser}/carrinho", method = RequestMethod.DELETE)
-	public ResponseEntity<?> limparCarrinho(@PathVariable("idUser") long idUser) {
+        ItemCarrinho produtoC = carrinhoService.atualizaItemCarrinho(idUser, idItem, numItens);
 
-		Optional<Cliente> optionalCliente = clienteService.getClienteById(idUser);
+        return new ResponseEntity<ItemCarrinho>(produtoC, HttpStatus.OK);
+    }
 
-		if (!optionalCliente.isPresent()) {
-			return ErroCliente.erroClienteNaoEncontrado(idUser);
-		}
+    @RequestMapping(value = "/{idUser}/carrinho", method = RequestMethod.DELETE)
+    public ResponseEntity<?> limparCarrinho(@PathVariable("idUser") long idUser) {
 
-		if (carrinhoService.isCarrinhoLimpo(idUser)) {
-			return ErroCarrinho.erroCarrinhoVazio(idUser);
-		}
+        Optional<Cliente> optionalCliente = clienteService.listaClienteById(idUser);
 
-		carrinhoService.limparCarrinho(idUser);
+        if (!optionalCliente.isPresent()) {
+            return ErroCliente.erroClienteNaoEncontrado(idUser);
+        }
 
-		return new ResponseEntity<ItemCarrinho>(HttpStatus.NO_CONTENT);
-	}
+        if (carrinhoService.isCarrinhoLimpo(idUser)) {
+            return ErroCarrinho.erroCarrinhoVazio(idUser);
+        }
 
-	@RequestMapping(value = "/{idUser}/carrinho", method = RequestMethod.PUT)
-	public ResponseEntity<?> finalizarCompra(@PathVariable("idUser") long idUser, @RequestBody String metodoCompra, UriComponentsBuilder ucBuilder) {
+        carrinhoService.limparCarrinho(idUser);
 
-		Optional<Cliente> optionalCliente = clienteService.getClienteById(idUser);
+        return new ResponseEntity<ItemCarrinho>(HttpStatus.NO_CONTENT);
+    }
 
-		if (!optionalCliente.isPresent()) {
-			return ErroCliente.erroClienteNaoEncontrado(idUser);
-		}
 
-		if (carrinhoService.isCarrinhoLimpo(idUser)) {
-			return ErroCarrinho.erroCarrinhoVazio(idUser);
-		}
 
-		String mensagemSaida = "COMPRA NO MERCADOFACIL\n" + "============================================================\n" + "PRODUTOS:\n";
-		BigDecimal precoFinal = new BigDecimal(0);
+    @RequestMapping(value = "/{idUser}/carrinho/entrega/{tipoEntrega}", method = RequestMethod.POST)
+    public ResponseEntity<?> defineEntrega (@PathVariable("tipoEntrega") String tipoEntrega ,@RequestBody String endereco, @PathVariable("idUser") long idUser) {
 
-		List<ItemCarrinho> carrinho = carrinhoService.listarItensCarrinho(idUser);
-		List<ItemVenda> listaCompra = new ArrayList<>();
-		Integer quantIntens = 0;
+        Optional<Cliente> optionalCliente = clienteService.listaClienteById(idUser);
 
-		for (ItemCarrinho item: carrinho) {
-			precoFinal = precoFinal.add(item.getPrecoItem().multiply(new BigDecimal(item.getQuantidadeItem())));
-			mensagemSaida += "Produto: " + item.getNomeItem() + "     R$" + item.getPrecoItem() + " x Quantidade: " + item.getQuantidadeItem() + "\n";
-			listaCompra.add(compraService.criarItemVenda(item.getQuantidadeItem(), item.getNomeItem(), item.getPrecoItem()));
-			quantIntens += item.getQuantidadeItem();
-		}
+        if (!optionalCliente.isPresent()) {
+            return ErroCliente.erroClienteNaoEncontrado(idUser);
+        }
 
-		Compra compra;
+        if (carrinhoService.isCarrinhoLimpo(idUser)) {
+            return ErroCarrinho.erroCarrinhoVazio(idUser);
+        }
+        if(!tipoEntrega.equals("express") && !tipoEntrega.equals("padrao") && !tipoEntrega.equals("retirada")) {
+            return new ResponseEntity<String>("Tipo de Entrega não existente", HttpStatus.OK);
+        }
+        carrinhoService.defineEntrega(idUser,tipoEntrega,endereco);
 
-		compra = compraService.criarCompra(precoFinal, listaCompra);
+        return new ResponseEntity<String>("Definido com Sucesso", HttpStatus.OK);
+    }
 
-		mensagemSaida += "============================================================\n" + "PREÇO FINAL DA COMPRA: R$" + compra.getValor() + "\n";
-		mensagemSaida += "============================================================\n\n";
+    @RequestMapping(value = "/{idUser}/carrinho/entrega/{tipoEntrega}", method = RequestMethod.PUT)
+    public ResponseEntity<?> editaEntrega (@PathVariable("tipoEntrega") String tipoEntrega,@PathVariable("idUser") long idUser, @RequestBody String endereco ) {
 
-		compraService.salvarCompra(compra);
+        Optional<Cliente> optionalCliente = clienteService.listaClienteById(idUser);
 
-		carrinhoService.limparCarrinho(idUser);
+        if (!optionalCliente.isPresent()) {
+            return ErroCliente.erroClienteNaoEncontrado(idUser);
+        }
 
-		return new ResponseEntity<String>(mensagemSaida, HttpStatus.OK);
-	}
+        if (carrinhoService.isCarrinhoLimpo(idUser)) {
+            return ErroCarrinho.erroCarrinhoVazio(idUser);
+        }
+        if(!tipoEntrega.equals("express") && !tipoEntrega.equals("padrao") && !tipoEntrega.equals("retirada")) {
+            return new ResponseEntity<String>("Tipo de Entrega não existente", HttpStatus.OK);
+        }
+        carrinhoService.defineEntrega(idUser,tipoEntrega, endereco);
+
+        return new ResponseEntity<String>("Alterado com Sucesso", HttpStatus.OK);
+
+    }
+    @RequestMapping(value = "/{idUser}/carrinho", method = RequestMethod.PUT)
+    public ResponseEntity<?> finalizarCompra(@PathVariable("idUser") long idUser, @RequestBody String metodoCompra,UriComponentsBuilder ucBuilder) {
+            Optional<Cliente> optionalCliente = clienteService.listaClienteById(idUser);
+
+            if (!optionalCliente.isPresent()) {
+                return ErroCliente.erroClienteNaoEncontrado(idUser);
+            }
+
+            if (carrinhoService.isCarrinhoLimpo(idUser)) {
+                return ErroCarrinho.erroCarrinhoVazio(idUser);
+            }
+            EntregaExpress tipoEntrega1 = new EntregaExpress(carrinhoService.getEndereco(idUser));
+            EntregaPadrao tipoEntrega2 = new EntregaPadrao(carrinhoService.getEndereco(idUser));
+            Retirada tipoEntrega3 = new Retirada();
+
+
+            String mensagemSaida = compraService.imprimeCabecalho();
+            BigDecimal precoFinal = new BigDecimal(0);
+
+            List<ItemCarrinho> carrinho = carrinhoService.listarItensCarrinho(idUser);
+            List<ItemVenda> listaVenda = new ArrayList<>();
+            Integer quantIntens = 0;
+            List<Lote> lotes = loteService.listarLotes();
+
+            BigDecimal precoEntrega = new BigDecimal(0);
+
+           for (ItemCarrinho item: carrinho) {
+
+                precoFinal = precoFinal.add(item.getPrecoItem().multiply(new BigDecimal(item.getQuantidadeItem())));
+
+               if (carrinhoService.getEntrega(idUser).equals("express")){
+                   precoEntrega = precoEntrega.add(tipoEntrega1.valorDaEntrega(produtoService.getProdutoById(item.getIdItem()).get().getTipo()));
+               } else if (carrinhoService.getEntrega(idUser).equals("padrao")){
+                    precoEntrega = precoEntrega.add(tipoEntrega2.valorDaEntrega(produtoService.getProdutoById(item.getIdItem()).get().getTipo()));
+               } else {
+                   precoEntrega = precoEntrega.add(tipoEntrega3.valorDaEntrega(produtoService.getProdutoById(item.getIdItem()).get().getTipo()));
+               }
+                compraService.diminuiNoLote(lotes,item);
+
+                mensagemSaida += compraService.imprimirDetalhesDoProduto(item);
+                listaVenda.add(compraService.criarItemVenda(item.getQuantidadeItem(), item.getNomeItem(), item.getPrecoItem()));
+                quantIntens += item.getQuantidadeItem();
+            }
+
+            Compra compra;
+
+            try {
+                compra = compraService.criarCompra(precoFinal.add(precoEntrega), metodoCompra, listaVenda);
+                compraService.atualizaPrecoCompra(compra, clienteService.aplicaDesconto(optionalCliente.get(), compra.getValor(), quantIntens));
+            }
+            catch (IllegalArgumentException e) {
+                return ErroPagamento.erroTipoPagamentoInvalido();
+            }
+
+        mensagemSaida += compraService.imprimirDetalhesDoPagamento(compra);
+
+        compraService.salvarCompra(compra);
+
+        carrinhoService.limparCarrinho(idUser);
+
+            return new ResponseEntity<String>(mensagemSaida, HttpStatus.OK);
+
+    }
+
+
 }
+

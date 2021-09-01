@@ -82,4 +82,25 @@ public class CarrinhoServiceImpl implements CarrinhoService {
 	public void removerCarrinho(long idUser) {
 		carrinhoRepository.delete(carrinhoRepository.findByIdUser(idUser).get(0));
 	}
+	@Override
+    public void defineEntrega(long idUser, String tipoEntrega, String endereco) {
+        Carrinho carrinho = carrinhoRepository.findByIdUser(idUser).get(0);
+        carrinho.setTipoEntrega(tipoEntrega);
+        carrinho.setEndereco(endereco);
+        carrinhoRepository.save(carrinho);
+
+    }
+
+    @Override
+    public String getEntrega(long idUser) {
+
+        return carrinhoRepository.findByIdUser(idUser).get(0).getTipoEntrega();
+    }
+
+    @Override
+    public String getEndereco(long idUser) {
+
+        return carrinhoRepository.findByIdUser(idUser).get(0).getEndereco();
+    }
+
 }

@@ -39,7 +39,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 
 	public Produto criaProduto(ProdutoDTO produtoDTO) {
 		Produto produto = new Produto(produtoDTO.getNome(),produtoDTO.getPreco(), produtoDTO.getCodigoBarra(), produtoDTO.getFabricante(),
-				produtoDTO.getCategoria(), produtoDTO.getDescricao());
+				produtoDTO.getCategoria(), produtoDTO.getDescricao(), produtoDTO.getTipo());
 
 		produto.tornaDisponivel();
 		return produto;

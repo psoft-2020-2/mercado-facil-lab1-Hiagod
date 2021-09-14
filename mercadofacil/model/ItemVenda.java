@@ -22,14 +22,6 @@ public class ItemVenda {
 
     public ItemVenda() { }
 
-    public ItemVenda(long id, int quantidadeItem, String nomeItem, BigDecimal precoItem) {
-        super();
-        this.id = id;
-        this.quantidadeItem = quantidadeItem;
-        this.nomeItem = nomeItem;
-        this.precoItem = precoItem;
-    }
-
     public ItemVenda(int quantidadeItem, String nomeItem, BigDecimal precoItem) {
         super();
         this.quantidadeItem = quantidadeItem;

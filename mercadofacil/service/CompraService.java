@@ -14,7 +14,17 @@ public interface CompraService {
 
     public void salvarCompra(Compra compra);
 
-    public Compra criarCompra(BigDecimal precoFinal, List<ItemVenda> carrinho);
-
+    public Compra criarCompra(BigDecimal precoFinal, String metodoCompra, List<ItemVenda> carrinho);
+    
+    public void atualizaPrecoCompra(Compra compra, BigDecimal novoValor);
     public ItemVenda criarItemVenda(int quantidadeItem, String nomeItem, BigDecimal precoItem);
+    
+    void diminuiNoLote(List<Lote> lotes, ItemCarrinho item);
+    
+    String imprimirDetalhesDoPagamento(Compra venda);
+
+    String imprimirDetalhesDoProduto(ItemCarrinho produto);
+
+    String imprimeCabecalho();
+
 }

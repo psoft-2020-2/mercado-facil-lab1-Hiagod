@@ -9,6 +9,10 @@ import com.ufcg.psoft.mercadofacil.model.Produto;
 public interface LoteService {
 
 	public List<Lote> listarLotes();
+	
+	void aumentaQuantidade(Long id, LoteDTO loteDTO);
+
+    void notificaInteressados(long idItem);
 
 	public void salvarLote(Lote lote);
 

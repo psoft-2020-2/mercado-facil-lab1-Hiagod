@@ -117,4 +117,11 @@ public class ProdutoApiController {
 			return new  ResponseEntity<String> (produtoService.exibeDescricao(id),HttpStatus.OK);
 		}
 	}
+	@RequestMapping(value = "/produto/valor/{id}", method = RequestMethod.PUT)
+	public ResponseEntity adicionaPromocao(@PathVariable Long id, @RequestBody ProdutoDTO produtoDTO){
+		produtoService.adicionaPromocaoProduto(id,produtoDTO);
+		produtoService.notificaInteressados(id);
+		return new ResponseEntity("Produto teve queda de preço", HttpStatus.OK);
+
+	}
 }

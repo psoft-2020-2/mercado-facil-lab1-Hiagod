@@ -1,6 +1,5 @@
 package com.ufcg.psoft.mercadofacil.model;
 
-import com.ufcg.psoft.mercadofacil.util.ErroCompra;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,15 +15,24 @@ public class Pagamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String formatoDePagamento;
+
     private BigDecimal valor;
 
-    private String data;
 
     public Pagamento() { }
 
-    public Pagamento(BigDecimal valor, String data) {
-        this.valor = valor;
-        this.data = data;
+    public Pagamento(String formatoDePagamento, BigDecimal valor) {
+        if (!(formatoDePagamento.equals("boleto") || formatoDePagamento.equals("paypal") || formatoDePagamento
+                .equals("cartão de crédito"))) {
+            throw new IllegalArgumentException("método de pagamento inválido");
+        }
+        this.formatoDePagamento = formatoDePagamento;
+        this.valor = valor.add(getAcrescimo(valor));
+    }
+
+    public String getFormatoDePagamento() {
+        return formatoDePagamento;
     }
 
     public BigDecimal getValor() {
@@ -35,29 +43,42 @@ public class Pagamento {
         this.valor = novoValor;
     }
 
-    public String getData() {
-        return data;
-    }
 
+    public BigDecimal getAcrescimo(BigDecimal valor) {
+        BigDecimal acrescimo = new BigDecimal(0);
+
+        switch (formatoDePagamento) {
+            case "paypal":
+                acrescimo = valor.multiply(new BigDecimal("0.02"));
+                break;
+            case "cartão de crédito":
+                acrescimo = valor.multiply(new BigDecimal("0.05"));
+                break;
+            default:
+                break;
+        }
+
+        return acrescimo;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Pagamento pagamento = (Pagamento) o;
-        return id.equals(pagamento.id) && valor.equals(pagamento.valor) && data.equals(pagamento.data);
+        return id.equals(pagamento.id) && formatoDePagamento.equals(pagamento.formatoDePagamento) && valor.equals(pagamento.valor) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, valor, data);
+        return Objects.hash(id, formatoDePagamento, valor);
     }
 
     @Override
     public String toString() {
         return  "{\n" +
+                "    \"formatoDePagamento\": \"" +  formatoDePagamento + "\",\n" +
                 "    \"valor\": "  + valor + ",\n" +
-                "    \"data\": \"" +  getData() + "\"\n" +
                 "  }";
     }
 }

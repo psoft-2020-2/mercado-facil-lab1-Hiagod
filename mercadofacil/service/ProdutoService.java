@@ -27,4 +27,8 @@ public interface ProdutoService {
 	public Produto atualizaProduto(ProdutoDTO produtoDTO, Produto produto);
 
 	public String exibeDescricao(Long id);
+	
+	public void adicionaPromocaoProduto(Long id, ProdutoDTO produtoDTO);
+
+	void notificaInteressados(long id);
 }

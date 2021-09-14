@@ -1,10 +1,9 @@
-package com.ufcg.psoft.mercadofacil.model;
+	package com.ufcg.psoft.mercadofacil.model;
 
 import java.math.BigDecimal;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.List;
+
+import javax.persistence.*;
 
 import com.ufcg.psoft.mercadofacil.model.Produto;
 
@@ -29,9 +28,16 @@ public class Produto {
 
 	private String descricao;
 
+	@OneToOne(cascade=CascadeType.PERSIST)
+	private TipoProduto tipo;
+	
+	@OneToMany
+	private List<Cliente> interessadosPromocao;
+
 	private Produto() {	}
 
-	public Produto(String nome, BigDecimal preco,String codigoBarra, String fabricante, String nomeCategoria, String descricao) {
+	public Produto(String nome, BigDecimal preco,String codigoBarra, String fabricante, String nomeCategoria,
+				   String descricao, String tipo ) {
 		
 		this.nome = nome;
 		this.preco = preco;
@@ -40,11 +46,14 @@ public class Produto {
 		this.categoria = nomeCategoria;
 		this.isDisponivel = false;
 		this.descricao = descricao;
+		this.tipo = new TipoProduto(tipo);
 	}
 
 	public Long getId() {
 		return id;
 	}
+
+	public String getTipo(){ return this.tipo.getTipo();}
 	
 	public String getNome() {
 		return nome;
@@ -97,12 +106,15 @@ public class Produto {
 		this.isDisponivel = true;
 	}
 	
-	public void tornaIndisponivel() { 
-		this.isDisponivel = false;
-	}
-	
 	public boolean isDisponivel() {
 		return this.isDisponivel;
+	}
+	
+	public void adicionaInteressadoPromocao(Cliente cliente){
+		this.interessadosPromocao.add(cliente);
+	}
+	public List<Cliente> interessadosPromocao(){
+		return this.interessadosPromocao;
 	}
 
 	@Override
